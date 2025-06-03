@@ -1,0 +1,4 @@
+The note must be 100 words or more.
+The note must contain the patient's name.
+The note must in JSON format.
+The note must contain all SOAP note sections.

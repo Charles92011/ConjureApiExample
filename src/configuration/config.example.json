@@ -1,0 +1,42 @@
+{
+    "conjureApiKey": "",
+    "baseUrl": "https://api.dev.scribept.com/v1",
+    "ruleBuilder": {
+        "buildRules": false,
+        "rulesFile": "src/agent/rules.json",
+        "samplesFile": "src/agent/samplenote.json",
+        "requirementsFile": "src/agent/requirements.txt"
+    },
+    "aws": {
+        "region": "",
+        "accessKeyId": "",
+        "secretAccessKey": "",
+        "bucket": ""
+    },
+    "endpoints": [
+        {
+            "key": "transcribe",
+            "url": "/sensor/voice_to_text/transcribe"
+        },
+        {
+            "key": "edit",
+            "url": "/agent/transcript_editor/edit"
+        },
+        {
+            "key": "noteGenerator",
+            "url": "/agent/scribe/note"
+        },
+        {
+            "key": "multiSessionGenerator",
+            "url": "/agent/scribe/multisession"
+        },        
+        {
+            "key": "check",
+            "url": "/agent/compliance/considerations"
+        },
+        {
+            "key": "build_rules",
+            "url": "/agent/compliance/rules"
+        }
+    ]   
+}

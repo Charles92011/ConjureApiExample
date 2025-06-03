@@ -1,0 +1,40 @@
+{
+    "subjective": {
+      "patientInformation": {
+        "name": "Charles Johnson",
+        "age": 56,
+        "gender": "male"
+      },
+      "chiefComplaint": "Low back pain",
+      "historyOfPresentIllness": "Patient injured his back two days ago while lifting some heavy boxes that contained a television set and a classic VHS video cassette recorder ordered from Amazon.com. Since then, he has been using ice and NSAIDs (specifically ibuprofen) to manage pain, which has been mostly dull and achy in the low back area.",
+      "socialHistory": "Patient has a wife and two children. One child is in elementary school and the other is in high school."
+    },
+    "objective": {
+      "vitalSigns": {},
+      "physicalExamination": {
+        "lumbarRangeOfMotion": {
+          "forwardBend": "5 degrees",
+          "backBend": "10 degrees",
+          "leftRotation": "15 degrees",
+          "rightRotation": "25 degrees"
+        },
+        "functionalTests": {
+          "sitStandTest": "25 seconds"
+        },
+        "additionalFindings": "Lumbar ARAM was fairly limited."
+      }
+    },
+    "assessment": {
+      "diagnosis": "Low back pain",
+      "clinicalImpression": "Patient presents with significant limitations in lumbar range of motion following acute injury from lifting heavy objects. Functional mobility is impaired as evidenced by prolonged sit-to-stand time."
+    },
+    "plan": {
+      "treatment": "Skilled physical therapy for the next fifteen weeks",
+      "homeInstructions": "Continue using ice and NSAIDs to manage pain",
+      "followUp": "Not specified"
+    },
+    "providerInformation": {
+      "name": "Dr. Michael Ditommaso",
+      "credentials": "PT"
+    }
+  }

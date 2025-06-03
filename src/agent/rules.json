@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "1.0.0",
+  "lastUpdated": "2023-11-15T14:30:00Z",
+  "payers": [
+    {
+      "payerId": "ALL_PAYERS",
+      "payerName": "All Payers",
+      "active": true,
+      "plans": [
+        {
+          "planId": "STANDARD_PLAN",
+          "planName": "Standard Documentation Requirements",
+          "active": true,
+          "effectiveDate": "2023-01-01",
+          "encounterTypes": [
+            {
+              "encounterTypeId": "ALL_NOTES",
+              "encounterTypeName": "Daily Note",
+              "sections": [
+                {
+                  "sectionId": "SECTION_1",
+                  "sectionName": "General Documentation Requirements",
+                  "criteria": [
+                    {
+                      "criterionId": "1.1",
+                      "criterionName": "Minimum Word Count",
+                      "description": "Verification that the clinical note meets the minimum required word count",
+                      "passCondition": "The clinical note contains 100 or more words in total",
+                      "failCondition": "The clinical note contains fewer than 100 words in total",
+                      "auditWeight": 1,
+                      "active": true
+                    },
+                    {
+                      "criterionId": "1.2",
+                      "criterionName": "Patient Identification",
+                      "description": "Verification that the patient's name is included in the note",
+                      "passCondition": "The patient's name is clearly documented within the note",
+                      "failCondition": "The patient's name is missing from the note",
+                      "requiredElements": [
+                        "Patient name"
+                      ],
+                      "auditWeight": 1,
+                      "active": true
+                    },
+                    {
+                      "criterionId": "1.3",
+                      "criterionName": "JSON Format Compliance",
+                      "description": "Verification that the note is properly formatted in JSON",
+                      "passCondition": "The note is in valid JSON format with proper syntax, including opening and closing braces, quotes around keys, and appropriate use of colons and commas",
+                      "failCondition": "The note is not in valid JSON format or contains syntax errors",
+                      "auditWeight": 1,
+                      "active": true
+                    },
+                    {
+                      "criterionId": "1.4",
+                      "criterionName": "SOAP Note Structure",
+                      "description": "Verification that all required SOAP note sections are present",
+                      "passCondition": "The note contains all required SOAP sections: Subjective, Objective, Assessment, and Plan",
+                      "failCondition": "One or more required SOAP sections (Subjective, Objective, Assessment, or Plan) are missing from the note",
+                      "requiredElements": [
+                        "subjective",
+                        "objective",
+                        "assessment",
+                        "plan"
+                      ],
+                      "auditWeight": 1,
+                      "active": true
+                    }
+                  ]
+                },
+                {
+                  "sectionId": "SECTION_2",
+                  "sectionName": "Subjective Section Requirements",
+                  "criteria": [
+                    {
+                      "criterionId": "2.1",
+                      "criterionName": "Patient Information",
+                      "description": "Verification that basic patient information is included in the subjective section",
+                      "passCondition": "The subjective section includes patient information with at least name and one additional demographic element (such as age or gender)",
+                      "failCondition": "The subjective section is missing patient information or contains only the patient's name without additional demographic elements",
+                      "requiredElements": [
+                        "name",
+                        "Additional demographic element"
+                      ],
+                      "auditWeight": 0.8,
+                      "active": true
+                    },
+                    {
+                      "criterionId": "2.2",
+                      "criterionName": "Chief Complaint Documentation",
+                      "description": "Verification that the patient's chief complaint is documented",
+                      "passCondition": "The subjective section includes a clearly stated chief complaint",
+                      "failCondition": "The subjective section does not include a chief complaint",
+                      "requiredElements": [
+                        "chiefComplaint"
+                      ],
+                      "auditWeight": 0.9,
+                      "active": true
+                    }
+                  ]
+                },
+                {
+                  "sectionId": "SECTION_3",
+                  "sectionName": "Objective Section Requirements",
+                  "criteria": [
+                    {
+                      "criterionId": "3.1",
+                      "criterionName": "Objective Data Inclusion",
+                      "description": "Verification that objective data is included",
+                      "passCondition": "The objective section contains at least one category of objective findings (such as physical examination, vital signs, or functional tests)",
+                      "failCondition": "The objective section is empty or does not contain any objective findings",
+                      "auditWeight": 0.8,
+                      "active": true
+                    }
+                  ]
+                },
+                {
+                  "sectionId": "SECTION_4",
+                  "sectionName": "Assessment Section Requirements",
+                  "criteria": [
+                    {
+                      "criterionId": "4.1",
+                      "criterionName": "Diagnosis Documentation",
+                      "description": "Verification that a diagnosis is documented",
+                      "passCondition": "The assessment section includes a clearly stated diagnosis",
+                      "failCondition": "The assessment section does not include a diagnosis",
+                      "requiredElements": [
+                        "diagnosis"
+                      ],
+                      "auditWeight": 0.9,
+                      "active": true
+                    }
+                  ]
+                },
+                {
+                  "sectionId": "SECTION_5",
+                  "sectionName": "Plan Section Requirements",
+                  "criteria": [
+                    {
+                      "criterionId": "5.1",
+                      "criterionName": "Treatment Plan Documentation",
+                      "description": "Verification that a treatment plan is documented",
+                      "passCondition": "The plan section includes a clearly stated treatment plan",
+                      "failCondition": "The plan section does not include a treatment plan",
+                      "requiredElements": [
+                        "treatment"
+                      ],
+                      "auditWeight": 0.9,
+                      "active": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
