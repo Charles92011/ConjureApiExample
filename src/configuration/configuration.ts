@@ -9,11 +9,10 @@ class Configuration{
     public audioUrl: string = '';
     public baseUrl: string = '';
     public ruleBuilder: {
-        buildRules: boolean,
         rulesFile: string,
         samplesFile: string,
         requirementsFile: string
-    } = {buildRules: false, rulesFile: '', samplesFile: '', requirementsFile: ''};
+    } = {rulesFile: '', samplesFile: '', requirementsFile: ''};
     public endpoints: {key: string, url: string}[] = [];
     public aws: {
         region: string,

@@ -1,7 +1,8 @@
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import config from "../configuration/configuration";
 import cli from "../utility/cli";
 import { apiFetch, writeToFile } from "../utility/utility";
+
 
 export type CheckRequest = {
     clinical_note: string;
@@ -38,18 +39,22 @@ export default class ComplianceChecker {
     public checkResponse: any;
 
     constructor() {
-        if (!config.ruleBuilder.buildRules) {
-            this.loadRules();
-        }
     }
 
-    public loadRules(){
+    public async loadRules(){
 
-        cli.startClock("Loading rules...");
+        if (existsSync(config.ruleBuilder.rulesFile)) {
+        
+            cli.startClock("Loading rules...");
+            const buffer:string = readFileSync(config.ruleBuilder.rulesFile, 'utf8');
+            this.buildRulesResponse = JSON.parse(buffer);
+            cli.stopClock("Rules Loaded");
 
-        this.buildRulesResponse = JSON.parse(readFileSync(config.ruleBuilder.rulesFile, 'utf8'));
+            return;
+        }
+    
+        return this.buildRules();
 
-        cli.stopClock("Rules Loaded");
     }
 
     async buildRules() {
@@ -68,9 +73,7 @@ export default class ComplianceChecker {
 
         writeToFile(`output/build-rules-request.json`, this.buildRulesRequest);
         this.buildRulesResponse = await apiFetch('build_rules', this.buildRulesRequest);
-        writeToFile(`output/build-rules-response.json`, this.buildRulesResponse);
-        
-        //cli.json(this.buildRulesResponse, COLORS.white);
+        writeToFile(config.ruleBuilder.rulesFile, this.buildRulesResponse);
         
         cli.stopClock("Rules built");
 
@@ -81,11 +84,7 @@ export default class ComplianceChecker {
         cli.startClock("Checking note...");
 
         if (!this.buildRulesResponse) {
-            if (config.ruleBuilder.buildRules) {
-                await this.buildRules();
-            } else {
-                this.loadRules();
-            }
+            this.loadRules();
         }
 
         const noteToCheck = typeof note === 'object' ? 

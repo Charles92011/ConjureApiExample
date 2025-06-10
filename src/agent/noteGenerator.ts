@@ -101,12 +101,17 @@ export default class NoteGenerator {
         writeToFile(`output/${caseRecord.name}-note.json`, this.note);
         //cli.json(this.note, COLORS.white);
 
-        cli.success(`Note generated for ${caseRecord.name}`);
-
         cli.stopClock(`Note generated for ${caseRecord.name}`);
 
     }
 
+    async loadMultiSessionPatientList(fileName: string) {
+
+        cli.startClock(`Loading multi-session patient list ...`);
+        this.multiSessionPatientListResponse = JSON.parse(readFileSync(fileName, 'utf8'));
+        cli.stopClock(`Multi-session patient list loaded`);
+    }
+    
     async generateMultiSessionPatientList(caseRecord: CaseRecord, transcript: string) {
 
         cli.startClock("Generating multi-session patient list...");
@@ -116,7 +121,6 @@ export default class NoteGenerator {
                 provider_information: providerInformation,
                 encounter_transcript: transcript,
             },
-            "template_instructions": "Follow the SOAP note template provided in the instructions."
         };
 
         //cli.json(this.multiSessionPatientListRequest, COLORS.gray);
@@ -179,11 +183,9 @@ export default class NoteGenerator {
 
         //cli.json(this.noteResponse, COLORS.white);
 
-        this.note = JSON.parse(this.noteResponse.note);
+        this.note = this.noteResponse.note;
         writeToFile(`output/${multiNote.name}-multi-note.json`, this.note);
         //cli.json(this.note, COLORS.white);
-
-        cli.success(`Multi-note generated for ${multiNote.name}`);
 
         cli.stopClock(`Multi-note generated for ${multiNote.name}`);
 
