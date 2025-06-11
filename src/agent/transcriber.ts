@@ -1,6 +1,6 @@
 import config from "../configuration/configuration";
 import cli, { COLORS } from "../utility/cli";
-import { apiFetch, createPresignedUrl, writeToFile } from "../utility/utility";
+import { apiFetch, createPresignedUrl, outputFile } from "../utility/utility";
 import { CaseRecord, caseRecords, providerInformation } from "../data/caseRecord";
 import { readFileSync } from "fs";
 
@@ -63,9 +63,9 @@ export default class Transcriber {
 
         //cli.json(this.transcribeRequest, COLORS.gray);
 
-        writeToFile(`output/${caseRecord.name}-transcribe-request.json`, this.transcribeRequest);
+        outputFile(`${caseRecord.name}-transcribe-request.json`, this.transcribeRequest);
         this.transcriberResponse = await apiFetch('transcribe', this.transcribeRequest);
-        writeToFile(`output/${caseRecord.name}-transcriber-response.json`, this.transcriberResponse);
+        outputFile(`${caseRecord.name}-transcriber-response.json`, this.transcriberResponse);
 
         //cli.json(this.transcriberResponse, COLORS.white);
 
@@ -101,9 +101,9 @@ export default class Transcriber {
 
         cli.startClock(`Editing ${caseRecord.name} ...`);
         
-        writeToFile(`output/${caseRecord.name}-edit-request.json`, this.editorRequest);
+        outputFile(`${caseRecord.name}-edit-request.json`, this.editorRequest);
         this.editorResponse = await apiFetch('edit', this.editorRequest);
-        writeToFile(`output/${caseRecord.name}-editor-response.json`, this.editorResponse);
+        outputFile(`${caseRecord.name}-editor-response.json`, this.editorResponse);
 
         //cli.json(this.editorResponse, COLORS.white);
 

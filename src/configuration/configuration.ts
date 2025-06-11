@@ -8,6 +8,7 @@ class Configuration{
     public conjureApiKey: string = '';
     public audioUrl: string = '';
     public baseUrl: string = '';
+    public outputFolder: string = '';
     public ruleBuilder: {
         rulesFile: string,
         samplesFile: string,

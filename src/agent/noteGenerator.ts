@@ -1,5 +1,5 @@
 import cli from "../utility/cli";
-import { apiFetch, writeToFile } from "../utility/utility";
+import { apiFetch, outputFile } from "../utility/utility";
 import { CaseRecord, providerInformation } from "../data/caseRecord";
 import { readFileSync } from "fs";
 
@@ -91,14 +91,14 @@ export default class NoteGenerator {
 
         //cli.json(noteRequest, COLORS.gray);
         
-        writeToFile(`output/${caseRecord.name}-note-request.json`, noteRequest);
+        outputFile(`${caseRecord.name}-note-request.json`, noteRequest);
         this.noteResponse = await apiFetch('noteGenerator', noteRequest);
-        writeToFile(`output/${caseRecord.name}-note-response.json`, this.noteResponse);
+        outputFile(`${caseRecord.name}-note-response.json`, this.noteResponse);
         
         //cli.json(this.noteResponse, COLORS.white);
 
         this.note = this.noteResponse.note;
-        writeToFile(`output/${caseRecord.name}-note.json`, this.note);
+        outputFile(`${caseRecord.name}-note.json`, this.note);
         //cli.json(this.note, COLORS.white);
 
         cli.stopClock(`Note generated for ${caseRecord.name}`);
@@ -125,9 +125,9 @@ export default class NoteGenerator {
 
         //cli.json(this.multiSessionPatientListRequest, COLORS.gray);
 
-        writeToFile(`output/multi-session-patient-list-request.json`, this.multiSessionPatientListRequest);
+        outputFile(`multi-session-patient-list-request.json`, this.multiSessionPatientListRequest);
         this.multiSessionPatientListResponse = await apiFetch('multiSessionGenerator', this.multiSessionPatientListRequest);
-        writeToFile(`output/multi-session-patient-list-response.json`, this.multiSessionPatientListResponse);
+        outputFile(`multi-session-patient-list-response.json`, this.multiSessionPatientListResponse);
 
         //cli.json(this.multiSessionPatientListResponse, COLORS.white);
 
@@ -177,14 +177,14 @@ export default class NoteGenerator {
 
         //cli.json(this.noteRequest, COLORS.gray);
 
-        writeToFile(`output/${multiNote.name}-multi-note-request.json`, this.noteRequest);
+        outputFile(`${multiNote.name}-multi-note-request.json`, this.noteRequest);
         this.noteResponse = await apiFetch('noteGenerator', this.noteRequest);
-        writeToFile(`output/${multiNote.name}-multi-note-response.json`, this.noteResponse);
+        outputFile(`${multiNote.name}-multi-note-response.json`, this.noteResponse);
 
         //cli.json(this.noteResponse, COLORS.white);
 
         this.note = this.noteResponse.note;
-        writeToFile(`output/${multiNote.name}-multi-note.json`, this.note);
+        outputFile(`${multiNote.name}-multi-note.json`, this.note);
         //cli.json(this.note, COLORS.white);
 
         cli.stopClock(`Multi-note generated for ${multiNote.name}`);

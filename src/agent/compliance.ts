@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "fs";
 import config from "../configuration/configuration";
 import cli from "../utility/cli";
-import { apiFetch, writeToFile } from "../utility/utility";
+import { apiFetch, outputFile } from "../utility/utility";
 
 
 export type CheckRequest = {
@@ -70,9 +70,9 @@ export default class ComplianceChecker {
 
         //cli.json(this.buildRulesRequest, COLORS.gray);
 
-        writeToFile(`output/build-rules-request.json`, this.buildRulesRequest);
+        outputFile(`build-rules-request.json`, this.buildRulesRequest);
         this.buildRulesResponse = await apiFetch('build_rules', this.buildRulesRequest);
-        writeToFile(config.ruleBuilder.rulesFile, this.buildRulesResponse);
+        outputFile(config.ruleBuilder.rulesFile, this.buildRulesResponse);
         
         cli.stopClock("Rules built");
 
@@ -101,12 +101,12 @@ export default class ComplianceChecker {
         }
         //cli.json(this.checkRequest, COLORS.gray);
 
-        let filename = this.name ? `output/${this.name}-check-request.json` : `output/check-request.json`;
-        writeToFile(filename, this.checkRequest);
+        let filename = this.name ? `${this.name}-check-request.json` : `check-request.json`;
+        outputFile(filename, this.checkRequest);
         this.checkResponse = await apiFetch('check', this.checkRequest);
 
-        filename = this.name ? `output/${this.name}-check-response.json` : `output/check-response.json`;
-        writeToFile(filename, this.checkResponse);
+        filename = this.name ? `${this.name}-check-response.json` : `check-response.json`;
+        outputFile(filename, this.checkResponse);
 
         //cli.json(this.checkResponse, COLORS.white);
 

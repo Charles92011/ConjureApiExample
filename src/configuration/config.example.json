@@ -1,8 +1,9 @@
 {
     "conjureApiKey": "",
     "baseUrl": "https://api.dev.scribept.com/v1",
+    "outputFolder": "output",
     "ruleBuilder": {
-        "rulesFile": "src/agent/rules.json",
+        "rulesFile": "aaa-rules.json",
         "samplesFile": "src/agent/samplenote.json",
         "requirementsFile": "src/agent/requirements.txt"
     },

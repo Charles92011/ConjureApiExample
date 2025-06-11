@@ -3,7 +3,7 @@ import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import config from '../configuration/configuration';
 import cli from './cli';
-import * as fs from 'fs/promises';
+import { mkdirSync, existsSync, writeFileSync } from "fs";
 
 export function generateUuid(): string {
 
@@ -81,11 +81,26 @@ export async function createPresignedUrl(bucket: string, path: string) {
     return getSignedUrl(s3Client, command, { expiresIn });
 };
 
-export async function writeToFile(filename: string, body: any, append: boolean = false): Promise<void> {
+export async function writeFile(filename: string, body: any, append: boolean = false): Promise<void> {
 
     try {
         const data = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
-        await fs.writeFile(filename, data, { flag: append ? 'a' : 'w' });
+        writeFileSync(filename, data, { flag: append ? 'a' : 'w' });
+    } catch (error) {
+        cli.error(`Failed to write to file ${filename}`);
+        throw error;
+    }
+
+}
+export async function outputFile(filename: string, body: any, append: boolean = false): Promise<void> {
+
+    try {
+        const folder = config.outputFolder;
+        if (!existsSync(folder)) {
+            mkdirSync(folder, { recursive: true });
+        }
+        filename = `${folder}/${filename}`;
+        return writeFile(filename, body, append);
     } catch (error) {
         cli.error(`Failed to write to file ${filename}`);
         throw error;
