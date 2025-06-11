@@ -97,7 +97,7 @@ export default class NoteGenerator {
         
         //cli.json(this.noteResponse, COLORS.white);
 
-        this.note = JSON.parse(this.noteResponse.note);
+        this.note = this.noteResponse.note;
         writeToFile(`output/${caseRecord.name}-note.json`, this.note);
         //cli.json(this.note, COLORS.white);
 

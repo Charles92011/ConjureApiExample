@@ -39,22 +39,21 @@ export default class ComplianceChecker {
     public checkResponse: any;
 
     constructor() {
+        this.loadRules();
     }
 
-    public async loadRules(){
+    public loadRules(): boolean {
 
         if (existsSync(config.ruleBuilder.rulesFile)) {
         
-            cli.startClock("Loading rules...");
+            cli.info("Loading rules...");
             const buffer:string = readFileSync(config.ruleBuilder.rulesFile, 'utf8');
             this.buildRulesResponse = JSON.parse(buffer);
-            cli.stopClock("Rules Loaded");
 
-            return;
+            return true;
         }
-    
-        return this.buildRules();
 
+        return false;
     }
 
     async buildRules() {
@@ -81,11 +80,13 @@ export default class ComplianceChecker {
 
     async check(note: any, transcript: string) {
 
-        cli.startClock("Checking note...");
-
         if (!this.buildRulesResponse) {
-            this.loadRules();
+            if (!this.loadRules()) {
+                return this.buildRules();
+            }
         }
+
+        cli.startClock("Checking note...");
 
         const noteToCheck = typeof note === 'object' ? 
             JSON.stringify(note, null, 2) :

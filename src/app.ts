@@ -14,9 +14,8 @@ async function main() {
     
     try {
 
-        //await checker.buildRules();
-
-        const caseName = "Multiple Patients";
+        //const caseName = "Multiple Patients";
+        const caseName = "Charles Johnson";
         const caseRecord: CaseRecord = caseRecords.get(caseName)!;
         if (!caseRecord) {
             throw `Case record not found: ${caseName}`;
@@ -48,6 +47,4 @@ async function main() {
 
 }
 
-//main();
-const checker = new ComplianceChecker();
-checker.buildRules();
+main();
