@@ -82,7 +82,7 @@ export default class ComplianceChecker {
 
         if (!this.buildRulesResponse) {
             if (!this.loadRules()) {
-                return this.buildRules();
+                await this.buildRules();
             }
         }
 
