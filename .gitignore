@@ -60,3 +60,5 @@ config.*.json
 # Files
 output/*
 !output/README.md
+
+src/data/caseRecords.json

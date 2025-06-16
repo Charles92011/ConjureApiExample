@@ -1,5 +1,5 @@
 import caseData from  './caseRecords.json';
-export const providerInformation = "Dr. Michael Ditommaso, PT";
+export const providerInformation = "Dr. Goofy Goof, PT, DPT";
 
 export type CaseRecord = {
     name: string;

@@ -9,6 +9,7 @@ class Configuration{
     public audioUrl: string = '';
     public baseUrl: string = '';
     public outputFolder: string = '';
+    public caseName: string = '';
     public ruleBuilder: {
         rulesFile: string,
         samplesFile: string,

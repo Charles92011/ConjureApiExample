@@ -1,0 +1,11 @@
+{
+    "caseRecords": [
+        {
+            "name" : "Mickey Mouse",
+            "path" : "mickey-mouse.wav",
+            "patientInformation" : "Mickey Mouse is a 94 year old male with high blood pressure",
+            "diarize" : false,
+            "multi" : false
+        }   
+    ]
+}

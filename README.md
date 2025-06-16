@@ -1,84 +1,204 @@
-# Clinical Documentation Compliance Checker
+# Conjure API Example - Clinical Documentation Workflow
 
-This project provides a system for validating and checking compliance of clinical documentation, with a specific focus on physical therapy notes. It ensures that medical documentation meets payer requirements and follows standard SOAP note formatting.
+This project demonstrates how to use the Conjure API to process clinical documentation, specifically for physical therapy notes. It shows a complete workflow from audio transcription to SOAP note generation and compliance checking.
 
 ## Overview
 
-The system processes clinical notes in JSON format and validates them against a comprehensive compliance checklist. It checks for:
-- Proper JSON formatting
-- Required SOAP note structure (Subjective, Objective, Assessment, Plan)
-- Minimum documentation requirements
-- Patient identification
-- Specific section requirements for each SOAP component
+This example showcases the Conjure API's capabilities for:
+- **Audio Transcription**: Converting audio files to text with speaker diarization
+- **Transcript Editing**: Correcting and improving transcription quality
+- **SOAP Note Generation**: Creating structured medical notes from transcripts
+- **Compliance Checking**: Validating documentation against audit rules
+- **Multi-Session Processing**: Handling multiple patients in a single session
 
-## File Structure
+## Prerequisites
 
-- `output/check-request.json`: Contains the clinical note and compliance checklist
-  - `clinical_note`: The actual medical documentation in JSON format
-  - `encounter_information`: Contains the encounter transcript
-  - `compliance_checklist`: Defines the validation rules and requirements
+- Node.js (v16 or higher)
+- Conjure API key
+- AWS S3 credentials (for audio file access)
+- TypeScript compiler
 
-## Compliance Requirements
+## Installation
 
-The system validates documentation against several key criteria:
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure your API credentials in `src/configuration/config.conjure.json`
 
-### General Documentation Requirements
-- Minimum word count (100+ words)
-- Patient identification
-- JSON format compliance
-- Complete SOAP note structure
+## Configuration
 
-### Section-Specific Requirements
-1. **Subjective Section**
-   - Patient information (name + demographics)
-   - Chief complaint documentation
+Create or update `src/configuration/config.conjure.json` with your credentials:
 
-2. **Objective Section**
-   - Objective data inclusion (physical examination, vital signs, functional tests)
+```json
+{
+  "conjureApiKey": "your-conjure-api-key",
+  "baseUrl": "https://api.conjure.com",
+  "outputFolder": "output",
+  "endpoints": [
+    {"key": "transcribe", "url": "/transcribe"},
+    {"key": "edit", "url": "/edit"},
+    {"key": "noteGenerator", "url": "/note-generator"},
+    {"key": "multiSessionGenerator", "url": "/multi-session-generator"},
+    {"key": "build_rules", "url": "/build-rules"},
+    {"key": "check", "url": "/check"}
+  ],
+  "aws": {
+    "region": "us-east-1",
+    "accessKeyId": "your-aws-access-key",
+    "secretAccessKey": "your-aws-secret-key",
+    "bucket": "your-s3-bucket"
+  }
+}
+```
 
-3. **Assessment Section**
-   - Diagnosis documentation
+## API Workflow
 
-4. **Plan Section**
-   - Treatment plan documentation
+The program demonstrates the following API call sequence:
 
-## Usage
+### 1. Audio Transcription (`/transcribe`)
+**Purpose**: Convert audio file to text transcript
+```typescript
+POST /transcribe
+{
+  "url": "presigned-s3-url",
+  "timestamped": false,
+  "diarize": true/false
+}
+```
 
-The system processes clinical notes in JSON format and validates them against the defined compliance checklist. Each criterion has specific pass/fail conditions and audit weights for scoring.
+### 2. Transcript Editing (`/edit`)
+**Purpose**: Correct transcription errors and improve quality
+```typescript
+POST /edit
+{
+  "encounter_information": {
+    "encounter_transcript": "raw-transcript",
+    "provider_information": "provider-details",
+    "patient_information": "patient-details"
+  },
+  "transcript_correction_instructions": "correction-guidelines"
+}
+```
 
-## Compliance Checklist Structure
+### 3. SOAP Note Generation (`/note-generator`)
+**Purpose**: Generate structured medical notes from transcript
+```typescript
+POST /note-generator
+{
+  "encounter_information": {
+    "provider_information": "provider-details",
+    "patient_information": "patient-details",
+    "encounter_transcript": "corrected-transcript"
+  },
+  "template_instructions": "Create a JSON SOAP note..."
+}
+```
 
-The compliance checklist is organized by:
-- Payers
-- Plans
-- Encounter Types
-- Sections
-- Individual Criteria
+### 4. Multi-Session Processing (`/multi-session-generator`)
+**Purpose**: Handle multiple patients in a single session
+```typescript
+POST /multi-session-generator
+{
+  "encounter_information": {
+    "provider_information": "provider-details",
+    "encounter_transcript": "multi-patient-transcript"
+  }
+}
+```
 
-Each criterion includes:
-- Unique identifier
-- Name
-- Description
-- Pass/fail conditions
-- Required elements
-- Audit weight
-- Active status
+### 5. Compliance Rules Building (`/build-rules`)
+**Purpose**: Create audit rules from requirements and samples
+```typescript
+POST /build-rules
+{
+  "audit_requirements": "compliance-requirements-text",
+  "samples": "sample-documentation"
+}
+```
 
-## Example
+### 6. Compliance Checking (`/check`)
+**Purpose**: Validate documentation against audit rules
+```typescript
+POST /check
+{
+  "clinical_note": "JSON-SOAP-note",
+  "encounter_information": {
+    "encounter_transcript": "transcript"
+  },
+  "chart_audit_rules": "audit-rules"
+}
+```
 
-The included example shows a physical therapy note for a patient with low back pain, demonstrating:
-- Proper SOAP note structure
-- Detailed subjective information
-- Objective measurements
-- Clear assessment and plan
-- Compliance with documentation requirements
+## Running the Program
 
-## Requirements
+### Build and Run
+```bash
+# Build TypeScript to JavaScript
+npm run build
 
-- JSON-compatible system
-- Support for JSON Schema validation
-- Ability to process and validate structured medical documentation
+# Run the program
+npm start
+```
 
-## Note
+### Development Mode
+```bash
+# Build and run in one command
+npm run dev
+```
 
-This system is designed to help healthcare providers maintain compliant documentation while following best practices for medical record-keeping. It is not a substitute for professional medical judgment or legal advice regarding documentation requirements. 
+## Program Flow
+
+1. **Initialize**: Load configuration and create API client instances
+2. **Audio Processing**: 
+   - Generate presigned S3 URL for audio file
+   - Transcribe audio to text
+   - Edit transcript for accuracy
+3. **Note Generation**:
+   - For single patients: Generate SOAP note directly
+   - For multi-session: Extract patient list, then generate individual notes
+4. **Compliance Checking**:
+   - Build audit rules (if not cached)
+   - Validate each generated note against compliance requirements
+5. **Output**: Save all requests/responses to `output/` directory
+
+## Output Files
+
+The program generates detailed logs of all API interactions:
+
+- `{patient}-transcribe-request.json` / `{patient}-transcriber-response.json`
+- `{patient}-edit-request.json` / `{patient}-editor-response.json`
+- `{patient}-note-request.json` / `{patient}-note-response.json`
+- `{patient}-note.json` (final SOAP note)
+- `{patient}-check-request.json` / `{patient}-check-response.json`
+- `aaa-rules.json` (cached compliance rules)
+
+## Case Records
+
+The program includes sample case records in `src/data/caseRecord.ts`:
+- **Single Patient**: "Charles Johnson" - Basic SOAP note generation
+- **Multi-Session**: "Multiple Patients" - Multiple patient processing
+
+## Error Handling
+
+The program includes comprehensive error handling:
+- API call failures with status codes
+- File I/O errors
+- Configuration validation
+- Graceful degradation for missing data
+
+## Customization
+
+To add new cases:
+1. Add case record to `src/data/caseRecord.ts`
+2. Update `caseName` in `src/app.ts`
+3. Ensure audio file exists in S3 bucket
+
+## API Rate Limits
+
+Be aware of Conjure API rate limits when processing multiple files. The program includes built-in timing information to help monitor API usage.
+
+## Support
+
+For API-specific questions, refer to the [Conjure API documentation](https://docs.scribept.com). This example demonstrates best practices for integrating the Conjure API into clinical documentation workflows. 
