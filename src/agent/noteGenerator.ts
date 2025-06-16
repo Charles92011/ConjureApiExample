@@ -2,6 +2,7 @@ import cli from "../utility/cli";
 import { apiFetch, outputFile } from "../utility/utility";
 import { CaseRecord, providerInformation } from "../data/caseRecord";
 import { readFileSync } from "fs";
+import SchemaBuilder from "./schemabuilder";
 
 export type NoteRequest = {
     encounter_information:{
@@ -41,6 +42,8 @@ export type MultiNote = {
 
 export default class NoteGenerator {
 
+    public schemaBuilder: SchemaBuilder = new SchemaBuilder();
+
     public noteRequest: NoteRequest = {
         encounter_information: {
         },
@@ -69,6 +72,8 @@ export default class NoteGenerator {
     }
 
     async generateNote(caseRecord: CaseRecord, transcript: string) {
+
+        await this.schemaBuilder.buildSchemaIfNeeded();
 
         cli.startClock(`Generating note for ${caseRecord.name} ...`);
 
@@ -113,6 +118,8 @@ export default class NoteGenerator {
     }
     
     async generateMultiSessionPatientList(caseRecord: CaseRecord, transcript: string) {
+
+        await this.schemaBuilder.buildSchemaIfNeeded();
 
         cli.startClock("Generating multi-session patient list...");
 

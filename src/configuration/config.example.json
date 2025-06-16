@@ -3,6 +3,10 @@
     "baseUrl": "https://api.dev.scribept.com/v2",
     "outputFolder": "output",
     "caseName": "Mickey Mouse",
+    "schemaBuilder": {
+        "schemaFile": "aaa-schema.json",
+        "samplesFile": "src/agent/samplenote.json"
+    },
     "ruleBuilder": {
         "rulesFile": "aaa-rules.json",
         "samplesFile": "src/agent/samplenote.json",
@@ -22,6 +26,10 @@
         {
             "key": "edit",
             "url": "/agent/transcript_editor/edit"
+        },
+        {
+            "key": "build_schema",
+            "url": "/agent/scribe/schema"
         },
         {
             "key": "noteGenerator",
