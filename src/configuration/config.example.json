@@ -2,6 +2,7 @@
     "conjureApiKey": "",
     "baseUrl": "https://api.dev.scribept.com/v2",
     "outputFolder": "output",
+    "caseName": "Mickey Mouse",
     "ruleBuilder": {
         "rulesFile": "aaa-rules.json",
         "samplesFile": "src/agent/samplenote.json",

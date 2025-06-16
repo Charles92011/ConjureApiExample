@@ -14,8 +14,7 @@ async function main() {
     
     try {
 
-        //const caseName = "Multiple Patients";
-        const caseName = "Charles Johnson";
+        const caseName = config.caseName;
         const caseRecord: CaseRecord = caseRecords.get(caseName)!;
         if (!caseRecord) {
             throw `Case record not found: ${caseName}`;
@@ -25,7 +24,6 @@ async function main() {
 
         await transcriber.transcribe(url, caseRecord);
         await transcriber.edit(caseRecord);
-        // transcriber.load(`output/Multiple Patients-editor-response.json`);
 
         if (!caseRecord.multi) {
             await generator.generateNote(caseRecord, transcriber.transcript);
@@ -34,7 +32,6 @@ async function main() {
 
         } else {
             await generator.generateMultiSessionPatientList(caseRecord, transcriber.transcript);
-            // await generator.loadMultiSessionPatientList(`output/multi-session-patient-list-response.json`);
             await generator.generateMultiNotes(async (name:string) => {
                 checker.name = name;
                 await checker.check(generator.note, transcriber.transcript);
