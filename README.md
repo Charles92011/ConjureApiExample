@@ -10,6 +10,7 @@ This example showcases the Conjure API's capabilities for:
 - **SOAP Note Generation**: Creating structured medical notes from transcripts
 - **Compliance Checking**: Validating documentation against audit rules
 - **Multi-Session Processing**: Handling multiple patients in a single session
+- **Schema Building**: Creating JSON schemas for structured note generation
 
 ## Prerequisites
 
@@ -34,33 +35,74 @@ Create or update `src/configuration/config.conjure.json` with your credentials:
 ```json
 {
   "conjureApiKey": "your-conjure-api-key",
-  "baseUrl": "https://api.conjure.com",
+  "baseUrl": "https://api.dev.scribept.com/v2",
   "outputFolder": "output",
-  "endpoints": [
-    {"key": "transcribe", "url": "/transcribe"},
-    {"key": "edit", "url": "/edit"},
-    {"key": "noteGenerator", "url": "/note-generator"},
-    {"key": "multiSessionGenerator", "url": "/multi-session-generator"},
-    {"key": "build_rules", "url": "/build-rules"},
-    {"key": "check", "url": "/check"}
-  ],
+  "caseName": "Multiple Patients",
+  "ruleBuilder": {
+    "rulesFile": "aaa-rules.json",
+    "samplesFile": "src/agent/samplenote.json",
+    "requirementsFile": "src/agent/requirements.txt"
+  },
+  "schemaBuilder": {
+    "samplesFile": "src/agent/samplenote.json",
+    "schemaFile": "aaa-schema.json"
+  },
   "aws": {
     "region": "us-east-1",
     "accessKeyId": "your-aws-access-key",
     "secretAccessKey": "your-aws-secret-key",
     "bucket": "your-s3-bucket"
-  }
+  },
+  "endpoints": [
+    {"key": "transcribe", "url": "/sensor/voice_to_text/transcribe"},
+    {"key": "edit", "url": "/agent/transcript_editor/edit"},
+    {"key": "build_schema", "url": "/agent/scribe/schema"},
+    {"key": "noteGenerator", "url": "/agent/scribe/note"},
+    {"key": "multiSessionGenerator", "url": "/agent/scribe/multisession"},
+    {"key": "check", "url": "/agent/compliance/considerations"},
+    {"key": "build_rules", "url": "/agent/compliance/rules"}
+  ]
 }
+```
+
+## Project Structure
+
+```
+ConjureApiExample/
+├── src/
+│   ├── agent/
+│   │   ├── compliance.ts          # Compliance checking functionality
+│   │   ├── noteGenerator.ts       # SOAP note generation
+│   │   ├── schemabuilder.ts       # JSON schema building
+│   │   ├── transcriber.ts         # Audio transcription
+│   │   ├── samplenote.json        # Sample SOAP note for schema building
+│   │   └── requirements.txt       # Compliance requirements
+│   ├── configuration/
+│   │   ├── config.conjure.json    # Main configuration file
+│   │   ├── config.example.json    # Example configuration
+│   │   └── configuration.ts       # Configuration loader
+│   ├── data/
+│   │   ├── caseRecord.ts          # Case record types
+│   │   ├── caseRecords.json       # Patient case definitions
+│   │   └── caseRecords.example.json # Example case records
+│   ├── utility/
+│   │   ├── cli.ts                 # CLI utilities with colored output
+│   │   └── utility.ts             # General utility functions
+│   └── app.ts                     # Main application entry point
+├── dist/                          # Compiled JavaScript output
+├── output/                        # Generated API logs and results
+├── package.json                   # Node.js dependencies
+└── tsconfig.json                  # TypeScript configuration
 ```
 
 ## API Workflow
 
 The program demonstrates the following API call sequence:
 
-### 1. Audio Transcription (`/transcribe`)
+### 1. Audio Transcription (`/sensor/voice_to_text/transcribe`)
 **Purpose**: Convert audio file to text transcript
 ```typescript
-POST /transcribe
+POST /sensor/voice_to_text/transcribe
 {
   "url": "presigned-s3-url",
   "timestamped": false,
@@ -68,10 +110,10 @@ POST /transcribe
 }
 ```
 
-### 2. Transcript Editing (`/edit`)
+### 2. Transcript Editing (`/agent/transcript_editor/edit`)
 **Purpose**: Correct transcription errors and improve quality
 ```typescript
-POST /edit
+POST /agent/transcript_editor/edit
 {
   "encounter_information": {
     "encounter_transcript": "raw-transcript",
@@ -82,10 +124,21 @@ POST /edit
 }
 ```
 
-### 3. SOAP Note Generation (`/note-generator`)
+### 3. Schema Building (`/agent/scribe/schema`)
+**Purpose**: Create JSON schemas for structured note generation
+```typescript
+POST /agent/scribe/schema
+{
+  "samples": "sample-notes-json",
+  "schema": "",
+  "recorded_actions": ""
+}
+```
+
+### 4. SOAP Note Generation (`/agent/scribe/note`)
 **Purpose**: Generate structured medical notes from transcript
 ```typescript
-POST /note-generator
+POST /agent/scribe/note
 {
   "encounter_information": {
     "provider_information": "provider-details",
@@ -96,10 +149,10 @@ POST /note-generator
 }
 ```
 
-### 4. Multi-Session Processing (`/multi-session-generator`)
+### 5. Multi-Session Processing (`/agent/scribe/multisession`)
 **Purpose**: Handle multiple patients in a single session
 ```typescript
-POST /multi-session-generator
+POST /agent/scribe/multisession
 {
   "encounter_information": {
     "provider_information": "provider-details",
@@ -108,20 +161,20 @@ POST /multi-session-generator
 }
 ```
 
-### 5. Compliance Rules Building (`/build-rules`)
+### 6. Compliance Rules Building (`/agent/compliance/rules`)
 **Purpose**: Create audit rules from requirements and samples
 ```typescript
-POST /build-rules
+POST /agent/compliance/rules
 {
   "audit_requirements": "compliance-requirements-text",
   "samples": "sample-documentation"
 }
 ```
 
-### 6. Compliance Checking (`/check`)
+### 7. Compliance Checking (`/agent/compliance/considerations`)
 **Purpose**: Validate documentation against audit rules
 ```typescript
-POST /check
+POST /agent/compliance/considerations
 {
   "clinical_note": "JSON-SOAP-note",
   "encounter_information": {
@@ -155,13 +208,15 @@ npm run dev
    - Generate presigned S3 URL for audio file
    - Transcribe audio to text
    - Edit transcript for accuracy
-3. **Note Generation**:
+3. **Schema Building**:
+   - Build JSON schema from sample notes (if not cached)
+4. **Note Generation**:
    - For single patients: Generate SOAP note directly
    - For multi-session: Extract patient list, then generate individual notes
-4. **Compliance Checking**:
+5. **Compliance Checking**:
    - Build audit rules (if not cached)
    - Validate each generated note against compliance requirements
-5. **Output**: Save all requests/responses to `output/` directory
+6. **Output**: Save all requests/responses to `output/` directory
 
 ## Output Files
 
@@ -169,6 +224,7 @@ The program generates detailed logs of all API interactions:
 
 - `{patient}-transcribe-request.json` / `{patient}-transcriber-response.json`
 - `{patient}-edit-request.json` / `{patient}-editor-response.json`
+- `build-schema-request.json` / `aaa-schema.json`
 - `{patient}-note-request.json` / `{patient}-note-response.json`
 - `{patient}-note.json` (final SOAP note)
 - `{patient}-check-request.json` / `{patient}-check-response.json`
@@ -176,9 +232,26 @@ The program generates detailed logs of all API interactions:
 
 ## Case Records
 
-The program includes sample case records in `src/data/caseRecord.ts`:
-- **Single Patient**: "Charles Johnson" - Basic SOAP note generation
-- **Multi-Session**: "Multiple Patients" - Multiple patient processing
+The program includes multiple case records in `src/data/caseRecords.json`:
+
+- **Charles Johnson**: 56-year-old male with high blood pressure
+- **Abigail Nightshade**: 10-year-old female
+- **Erica Nocturne**: 40-year-old female (with diarization)
+- **Nan Blackthorn**: 45-year-old female (with diarization)
+- **Multiple Patients**: Multi-session processing with speaker diarization
+
+Each case can be configured with different settings:
+- `diarize`: Enable/disable speaker diarization
+- `multi`: Single vs. multi-patient session
+- `patientInformation`: Patient demographics and medical history
+
+## CLI Utilities
+
+The project includes a comprehensive CLI utility (`src/utility/cli.ts`) with:
+- **Colored Output**: ANSI color codes for different message types
+- **Emojis**: Visual indicators for different operations
+- **Timing**: Built-in performance measurement
+- **Logging Levels**: Info, success, error, warning, and loading states
 
 ## Error Handling
 
@@ -191,9 +264,16 @@ The program includes comprehensive error handling:
 ## Customization
 
 To add new cases:
-1. Add case record to `src/data/caseRecord.ts`
-2. Update `caseName` in `src/app.ts`
+1. Add case record to `src/data/caseRecords.json`
+2. Update `caseName` in `src/configuration/config.conjure.json`
 3. Ensure audio file exists in S3 bucket
+
+## Dependencies
+
+The project uses the following key dependencies:
+- `@aws-sdk/client-s3`: AWS S3 client for file access
+- `@aws-sdk/s3-request-presigner`: Generate presigned URLs
+- `@types/node`: TypeScript definitions for Node.js
 
 ## API Rate Limits
 

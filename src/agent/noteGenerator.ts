@@ -2,6 +2,7 @@ import cli from "../utility/cli";
 import { apiFetch, outputFile } from "../utility/utility";
 import { CaseRecord, providerInformation } from "../data/caseRecord";
 import { readFileSync } from "fs";
+import SchemaBuilder from "./schemabuilder";
 
 export type NoteRequest = {
     encounter_information:{
@@ -17,7 +18,7 @@ export type NoteRequest = {
     },
     transcript_correction_instructions?: string;
     medical_terminology?: string;
-    template_instructions?: string;
+    note_schema: string;
 }   
 
 export type MultiSessionPatientListRequest = {
@@ -41,10 +42,12 @@ export type MultiNote = {
 
 export default class NoteGenerator {
 
+    public schemaBuilder: SchemaBuilder = new SchemaBuilder();
+
     public noteRequest: NoteRequest = {
         encounter_information: {
         },
-        template_instructions: "Create a JSON SOAP note"
+        note_schema: ""
     }
 
     public multiSessionPatientListRequest: MultiSessionPatientListRequest = {
@@ -70,6 +73,8 @@ export default class NoteGenerator {
 
     async generateNote(caseRecord: CaseRecord, transcript: string) {
 
+        await this.schemaBuilder.buildSchemaIfNeeded();
+
         cli.startClock(`Generating note for ${caseRecord.name} ...`);
 
         const noteRequest: NoteRequest = {
@@ -77,10 +82,7 @@ export default class NoteGenerator {
                 provider_information: providerInformation,
                 patient_information: caseRecord.patientInformation
             },
-            template_instructions: "Create a JSON SOAP note include any patient information provided."
-            + "if date of service is missing use today's date. "
-            + "if patient information is missing, use the patient information provided in the patient_information field."
-            + "leave out any fields that that would be blank."
+            note_schema: JSON.stringify(this.schemaBuilder.buildSchemaResponse)
         };
 
         if (caseRecord.diarize) {
@@ -113,6 +115,8 @@ export default class NoteGenerator {
     }
     
     async generateMultiSessionPatientList(caseRecord: CaseRecord, transcript: string) {
+
+        await this.schemaBuilder.buildSchemaIfNeeded();
 
         cli.startClock("Generating multi-session patient list...");
 
@@ -164,7 +168,7 @@ export default class NoteGenerator {
                 provider_information: providerInformation,
                 scratch_notes: multiNote.scratchNotes.join("\n")
             },
-            template_instructions: "Create a JSON SOAP note include any patient information provided"
+            note_schema: JSON.stringify(this.schemaBuilder.buildSchemaResponse)
         };
 
         if (multiNote.name) {

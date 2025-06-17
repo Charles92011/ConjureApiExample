@@ -15,6 +15,10 @@ class Configuration{
         samplesFile: string,
         requirementsFile: string
     } = {rulesFile: '', samplesFile: '', requirementsFile: ''};
+    public schemaBuilder: {
+        samplesFile: string,
+        schemaFile: string
+    } = {samplesFile: '', schemaFile: ''};
     public endpoints: {key: string, url: string}[] = [];
     public aws: {
         region: string,
