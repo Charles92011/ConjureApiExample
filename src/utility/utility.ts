@@ -95,14 +95,24 @@ export async function writeFile(filename: string, body: any, append: boolean = f
 export async function outputFile(filename: string, body: any, append: boolean = false): Promise<void> {
 
     try {
-        const folder = config.outputFolder;
-        if (!existsSync(folder)) {
-            mkdirSync(folder, { recursive: true });
-        }
-        filename = `${folder}/${filename}`;
+
+        filename = outputFileName(filename);
         return writeFile(filename, body, append);
     } catch (error) {
         cli.error(`Failed to write to file ${filename}`);
         throw error;
     }
+}
+
+export function outputFileName(filename: string) {
+
+    const folder = config.outputFolder;
+    if (!existsSync(folder)) {
+        mkdirSync(folder, { recursive: true });
+    }
+
+    filename = `${folder}/${filename}`;
+
+    return filename;
+
 }

@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "fs";
 import config from "../configuration/configuration";
 import cli from "../utility/cli";
-import { apiFetch, outputFile } from "../utility/utility";
+import { apiFetch, outputFile, outputFileName } from "../utility/utility";
 
 
 export type CheckRequest = {
@@ -44,10 +44,12 @@ export default class ComplianceChecker {
 
     public loadRules(): boolean {
 
-        if (existsSync(config.ruleBuilder.rulesFile)) {
+        const filename:string = outputFileName(config.ruleBuilder.rulesFile);
+        
+        if (existsSync(filename)) {
         
             cli.info("Loading rules...");
-            const buffer:string = readFileSync(config.ruleBuilder.rulesFile, 'utf8');
+            const buffer:string = readFileSync(filename, 'utf8');
             this.buildRulesResponse = JSON.parse(buffer);
 
             return true;

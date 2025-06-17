@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "fs";
 import config from "../configuration/configuration";
 import cli from "../utility/cli";
-import { apiFetch, outputFile } from "../utility/utility";
+import { apiFetch, outputFile, outputFileName } from "../utility/utility";
 
 export type BuildSchemaRequest = {
     "samples": string;
@@ -24,10 +24,12 @@ export default class SchemaBuilder {
 
     public loadSchema(): boolean {
 
-        if (existsSync(config.schemaBuilder.schemaFile)) {
+        const filename:string = outputFileName(config.schemaBuilder.schemaFile);
+
+        if (existsSync(filename)) {
         
             cli.info("Loading schema...");
-            const buffer:string = readFileSync(config.schemaBuilder.schemaFile, 'utf8');
+            const buffer:string = readFileSync(filename, 'utf8');
             this.buildSchemaResponse = JSON.parse(buffer);
 
             return true;
