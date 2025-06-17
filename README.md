@@ -232,13 +232,7 @@ The program generates detailed logs of all API interactions:
 
 ## Case Records
 
-The program includes multiple case records in `src/data/caseRecords.json`:
-
-- **Charles Johnson**: 56-year-old male with high blood pressure
-- **Abigail Nightshade**: 10-year-old female
-- **Erica Nocturne**: 40-year-old female (with diarization)
-- **Nan Blackthorn**: 45-year-old female (with diarization)
-- **Multiple Patients**: Multi-session processing with speaker diarization
+The includes case records in `src/data/caseRecords.json`:
 
 Each case can be configured with different settings:
 - `diarize`: Enable/disable speaker diarization
